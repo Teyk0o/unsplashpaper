@@ -21,8 +21,17 @@ if getattr(sys, "frozen", False):
 else:
     SCRIPT_DIR = Path(__file__).parent.resolve()
 
-CONFIG_PATH = SCRIPT_DIR / "config.json"
-DATA_DIR = SCRIPT_DIR / "data"
+if PLATFORM == "Linux" and getattr(sys, "frozen", False):
+    _config_home = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
+    _data_home = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local" / "share"))
+    CONFIG_DIR = _config_home / "unsplashpaper"
+    DATA_DIR = _data_home / "unsplashpaper"
+else:
+    CONFIG_DIR = SCRIPT_DIR
+    DATA_DIR = SCRIPT_DIR / "data"
+
+CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+CONFIG_PATH = CONFIG_DIR / "config.json"
 CURRENT_WALLPAPER = DATA_DIR / "current.jpg"
 LIKES_PATH = DATA_DIR / "likes.json"
 UNSPLASH_API = "https://api.unsplash.com"
